@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Jumbotron, Button, Form, FormGroup, Label, Input, FormText, Alert } from 'reactstrap';
 import axios from 'axios';
+import CardComponent from './CardComponent';
+
 
 
 
@@ -26,7 +28,8 @@ class SearchComponent extends Component {
         super(props);
 
         this.state = {
-            error: ""
+            error: "",
+            city: undefined
         }
         this.onSearch = this.onSearch.bind(this);
         this.onHandleChange = this.onHandleChange.bind(this);
@@ -37,10 +40,14 @@ class SearchComponent extends Component {
 
         // let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&appid=57f314dd60cef03e4c65e4cc3785db13`)
         try {
-            let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&appid=57f314dd60cef03e4c65e4cc3785db13`)
-            console.log(city)
+            let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
+            console.log(city.data);
+            this.setState({
+                city: city.data
+            })
+
         } catch (e) {
-            this.setState({ error: "City not found" })
+            this.setState({ error: "City not found", city: undefined })
         }
 
     }
@@ -48,7 +55,8 @@ class SearchComponent extends Component {
     onHandleChange(event) {
         if (event.target.value.length === 0) {
             this.setState({
-                error: "Please Enter a City Name"
+                error: "Please Enter a City Name",
+                city: undefined
             })
 
         }
@@ -61,9 +69,10 @@ class SearchComponent extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div >
+
                 <Jumbotron fluid>
-                    <div className="container-fluid">
+                    <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-12">
                                 <h1 className="text-center">Search Your City</h1>
@@ -88,7 +97,9 @@ class SearchComponent extends Component {
 
                     </div>
                 </Jumbotron>
+
                 <HandleError error={this.state.error}></HandleError>
+                <CardComponent city={this.state.city}></CardComponent>
             </div>
         )
     }
