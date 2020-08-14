@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button
+    CardTitle, CardSubtitle, Button, CardFooter
 } from 'reactstrap';
 import '../App.css'
 
@@ -11,31 +11,37 @@ function CardComponent(props) {
 
 
     if (props.city) {
-        return (
-
-            <div className="container">
-                <div className="row">
-                    <Card className="col-8 offset-md-2">
-                        <CardImg className="imgs" top width="auto" src="http://openweathermap.org/img/wn/10d@2x.png" alt="Card image cap" />
+        const forecast = props.city.list.map((city) => {
+            return (
+                <div key={city.dt} className="row">
+                    <Card className="col-8 offset-md-2 card">
+                        <CardImg className="imgs" top width="auto" src={`http://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`} alt={city.weather[0].description} />
                         <CardBody>
 
-                            <CardTitle>{props.city.name}</CardTitle>
-                            <CardSubtitle>
-                                Current Temperature: <span>{props.city.main.temp}</span>
-                            </CardSubtitle>
+                            <CardTitle>{city.name}</CardTitle>
+                            <CardSubtitle>{city.weather[0].description}
 
+                            </CardSubtitle>
+                            <CardText>Current Temperature: <span>{city.main.temp}</span></CardText>
                             <ul className="list-group list-group-flush">
-                                <li className="list-group-item">Humidity <span>{props.city.main.humidity}</span></li>
-                                <li className="list-group-item">Wind Speed <span>{props.city.wind.speed}</span></li>
-                                <li className="list-group-item">High/Low <span>{props.city.main.temp_max}/{props.city.main.temp_min}</span></li>
+                                <li className="list-group-item">Humidity <span>{city.main.humidity}</span></li>
+                                <li className="list-group-item">Wind Speed <span>{city.wind.speed}</span></li>
+                                <li className="list-group-item">High/Low <span>{city.main.temp_max}/{city.main.temp_min}</span></li>
 
                             </ul>
 
 
                         </CardBody>
+                        <CardFooter>{city.dt_txt}</CardFooter>
                     </Card>
 
-                </div>
+                </div>)
+        })
+        return (
+
+            <div className="container">
+                {forecast}
+
             </div>
         )
     }

@@ -38,9 +38,10 @@ class SearchComponent extends Component {
     async onSearch(event) {
         event.preventDefault();
 
-        // let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&appid=57f314dd60cef03e4c65e4cc3785db13`)
+
         try {
-            let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
+            //let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
+            let city = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
             console.log(city.data);
             this.setState({
                 city: city.data
@@ -81,17 +82,19 @@ class SearchComponent extends Component {
 
 
                         <form onSubmit={this.onSearch}>
+
                             <div className="row">
-                                <div className="col-8 offset-2 align-self-center form-group">
+                                <div className="col-8 offset-2 form-group">
                                     <input type="text" onChange={this.onHandleChange} className="form-control" id="cityName" name="cityName" placeholder="Enter City Name" />
                                 </div>
 
                             </div>
-                            <div className="row ">
-                                <div className="col offset-md-5">
+                            <div className="row justify-content-center">
+                                <div className="col-md-4 text-center">
                                     <button color="primary" type="submit" className="btn btn-primary">Get Weather</button>
                                 </div>
                             </div>
+
                         </form>
 
 
