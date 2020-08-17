@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Jumbotron, Button, Form, FormGroup, Label, Input, FormText, Alert } from 'reactstrap';
+import { Jumbotron, Alert } from 'reactstrap';
 import axios from 'axios';
 import CardComponent from './CardComponent';
 
@@ -23,16 +23,25 @@ function HandleError(props) {
 }
 
 class SearchComponent extends Component {
-
+    _isMounted = false;
     constructor(props) {
         super(props);
 
         this.state = {
             error: "",
-            city: undefined
+            cityData: undefined,
+            cityFData: undefined
         }
         this.onSearch = this.onSearch.bind(this);
         this.onHandleChange = this.onHandleChange.bind(this);
+    }
+
+
+    componentDidMount() {
+        this._isMounted = true
+    }
+    componentWillUnmount() {
+        this._isMounted = false
     }
 
     async onSearch(event) {
@@ -40,15 +49,21 @@ class SearchComponent extends Component {
 
 
         try {
-            //let city = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
-            let city = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${event.target.cityName.value}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
-            console.log(city.data);
+            let name = event.target.cityName.value;
+
+            let city = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${name}&units=metric&appid=57f314dd60cef03e4c65e4cc3785db13`)
+            if (this._isMounted === true) { this.setState({ cityData: city.data }) }
+
+            let cityF = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${name}&units=imperial&appid=57f314dd60cef03e4c65e4cc3785db13`)
             this.setState({
-                city: city.data
+                cityFData: cityF.data
             })
 
+
+
         } catch (e) {
-            this.setState({ error: "City not found", city: undefined })
+            console.log(e);
+            if (this._isMounted === true) { this.setState({ error: "City not found", cityData: undefined, cityFData: undefined }) }
         }
 
     }
@@ -57,7 +72,8 @@ class SearchComponent extends Component {
         if (event.target.value.length === 0) {
             this.setState({
                 error: "Please Enter a City Name",
-                city: undefined
+                cityData: undefined,
+                cityFData: undefined
             })
 
         }
@@ -102,7 +118,7 @@ class SearchComponent extends Component {
                 </Jumbotron>
 
                 <HandleError error={this.state.error}></HandleError>
-                <CardComponent city={this.state.city}></CardComponent>
+                <CardComponent city={this.state.cityData} cityF={this.state.cityFData} ></CardComponent>
             </div>
         )
     }
